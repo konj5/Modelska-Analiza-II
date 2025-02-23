@@ -26,19 +26,27 @@ def A(y):
     return L(y) * np.array([y[3], -y[2]]) - np.array([y[0], -y[1]])/np.sqrt(y[0]**2 + y[1]**2)
 
 
-def solve(method, y0, tmax):
-    sol = solve_ivp(f, [0,tmax], y0, method, max_step = 0.1, dense_output=True)
+def solve(method, y0, tmax, dtmax):
+    sol = solve_ivp(f, [0,tmax], y0, method, max_step = dtmax, dense_output=True)
     return sol
 
 
-def solve_euler(y0, tmax):
-    dt = 0.05
+def solve_euler(y0, tmax, dtmax):
+    dt = dtmax
     ts = np.arange(0,tmax,dt)
     ys = [np.array(y0)]
     for i in range(len(ts)):
         ys.append(ys[-1] + dt * f(ts[i], ys[-1]))
 
     return ts, ys
+
+
+def solve_wrapped(method, y0, tmax, dtmax):
+    if method == "euler": return solve_euler(y0,tmax, dtmax)
+    return solve(method, y0, tmax, dtmax)
+
+
+
 
 
 tmax = 10
